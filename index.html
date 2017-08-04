@@ -1,0 +1,242 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html,body,h1,h2,h3,h4,h5,h6,div,dl,dt,dd,ul,ol,li,p,blockquote,pre,hr,figure,table,caption,th,td,form,fieldset,legend,input,button,textarea,menu{margin:0;padding:0;}
+        header,footer,section,article,aside,nav,hgroup,address,figure,figcaption,menu,details{display:block;}
+        table{border-collapse:collapse;border-spacing:0;}
+        caption,th{text-align:left;font-weight:normal;}
+        html,body,fieldset,img,iframe,abbr{border:0;}
+        i,cite,em,var,address,dfn{font-style:normal;}
+        [hidefocus],summary{outline:0;}
+        li{list-style:none;}
+        h1,h2,h3,h4,h5,h6,small{font-size:100%;}
+        sup,sub{font-size:83%;}
+        pre,code,kbd,samp{font-family:inherit;}
+        q:before,q:after{content:none;}
+        textarea{overflow:auto;resize:none;}
+        label,summary{cursor:default;}
+        a,button{cursor:pointer;}
+        h1,h2,h3,h4,h5,h6,em,strong,b{font-weight:bold;}
+        del,ins,u,s,a,a:hover{text-decoration:none;}
+        body,textarea,input,button,select,keygen,legend{font:12px/1.14 arial,\5b8b\4f53;color:#333;outline:0;}
+        body{background:#fff;}
+        a,a:hover{color:#333;}
+
+        input{height:38px;width:100%;border-radius:4px;line-height:20px;padding: 10px 15px;margin-top:10px;font-size:14px;border:none;}
+        .btn{background-color:#1abc9c;color:#fff;font-family:黑体;}
+        .group:after{content:".";clear:both;display:block;height:0;overflow:hidden;visibility:hidden;}
+        .group label{border-bottom-left-radius:4px;border-top-left-radius:4px;text-align:center;line-height:38px;float:left;left:0;margin-top:10px;height:38px;width:38px;color: #fff;background-color: #1abc9c;}
+        .group input{border-bottom-left-radius: 0;border-top-left-radius: 0;width: 122px;float: left;}
+
+        .nav{width: 100%;height: 60px;padding: 0 12px;background-color: #34495e;}
+        .nav li{float:left;list-style:none;}
+        .nav a{display:inline-block;height:60px;line-height:36px;padding:12px;color:#fff;box-sizing:border-box;}
+
+        .box{height:600px;width:100%;}
+        .setting{padding:16px;float:left;height:568px;width:200px;color:#34495e;background-color:#1abc9c;}
+        .setting header{font-size:20px;font-family:黑体;color:#fff;}
+        .setting section {height: auto;padding:10px;border:none;margin-top:12px;border-radius:6px;font-size:14px;text-align:center;color:#34495e;background-color:#edeff1;}
+        .setting .elements{overflow-y:scroll;height:300px;}
+        .container{position:relative;float:left;width:600px;height:600px;background-color:#f3f3f3;}
+        .container .number{position:absolute;}
+        .container .column{background-color:#2980B9;}
+        .container .label{background:#3498DB;color:#fff;text-align:center;line-height:20px;}
+
+        .operation li{float:left;}
+        .operation a{display:inline-block;border:solid 1px #ccc;padding:6px 12px;text-align:center;border-radius:2px;margin:2px;}
+        .operation .a-disabled{background-color:#E6E6E6;}
+    </style>
+</head>
+<body>
+    <ul id="nav" class="nav">
+        <li><a href="#">选择排序</a></li>
+        <li><a href="#">冒泡排序</a></li>
+        <li><a href="#">插入排序</a></li>
+        <li><a href="#">归并排序</a></li>
+    </ul>
+    <div class="box">
+        <div id="container" class="container"></div>
+        <div id="setting" class="setting"> 
+            <header>设置面板</header>
+            <section>
+                <p>
+                    <label for="arrLen">设置数组长度</label>
+                    <input type="text" id="arrLen">
+                </p>
+                <p>
+                    <input class="btn" type="button" value="确定" id="submitBtn">
+                </p>
+            </section>
+            <section>
+                <span>设置数组中的元素</span>
+                <div id="elements" class="elements">
+
+                </div>
+                <p>
+                    <input class="btn" type="button" value="确定" id="submitBtn2">
+                </p>
+            </section>
+        </div>
+    </div>
+    <ul class="operation">
+        <li><a href="#" id="runBtn">运行</a></li>
+        <li><a href="#" class="a-disabled" id="pauseBtn" disabled="true">暂停</a></li>
+        <li><a href="#" id="resetBtn">复位</a></li>
+    </ul>
+    <script src="es5/container.js" type="text/javascript"></script>
+    <script src="es5/bubbleSort.js" type="text/javascript"></script>
+    <script src="es5/selectSort.js" type="text/javascript"></script>
+    <script src="es5/insertSort.js" type="text/javascript"></script>
+    <script src="es5/mergeSort.js" type="text/javascript"></script>
+    <script>
+        var data = [6, 5, 4, 3, 2, 1];
+
+        var container = document.getElementById('container');
+        var runBtn = document.getElementById('runBtn');
+        var resetBtn = document.getElementById('resetBtn');
+        var pauseBtn = document.getElementById('pauseBtn');
+        var submitBtn = document.getElementById('submitBtn');
+        var submitBtn2 = document.getElementById('submitBtn2');
+        var aTags = document.getElementById('nav').getElementsByTagName('a');
+        var sortStr = 'mergeSort';
+
+        var sort = new SelectSort(container, data);
+        initElements(data);
+        sort.init();
+
+        function initElements(numbers) {
+            var elements = document.getElementById('elements');
+            var template = '';
+            for(var i = 0; i < numbers.length; i++) {
+                template +=   '<div class="group">'
+                                   +        '<label>' + i + '</label>'
+                                   +        '<input type="text" value=' + numbers[i] + '>'
+                                   +    '</div>';
+            }
+            elements.innerHTML = template;
+        }
+        // 重置
+        resetBtn.onclick = function(e) {
+            e.preventDefault();
+            pauseBtn.className = 'a-disabled';
+            runBtn.className = '';
+            sort.reset();
+        }
+        runBtn.onclick = function(e) {
+            e.preventDefault();
+            pauseBtn.className = '';
+            this.className = 'a-disabled';
+            sort.run();
+        }
+        pauseBtn.onclick = function(e) {
+            e.preventDefault();
+            sort.pause();
+            this.className = 'a-disabled';
+            runBtn.className = '';
+        }
+        function operationBtnReset() {
+            pauseBtn.className = 'a-disabled';
+            runBtn.className = '';
+        }
+        // 随机生成数组
+        function randomArray(length, min, max) {
+            var result = new Array(length);
+            var range = max - min;   
+            for(var i = 0; i < length; i++) {
+                var rand = Math.random();   
+                result[i] = min + Math.round(rand * range);
+            }
+            return result;
+        }
+        // 设置数组长度
+        submitBtn.onclick = function(e) {
+            e.preventDefault();
+            var arrLenStr = document.getElementById('arrLen').value;
+            if(arrLenStr.length === 0) {
+                alert('请您在输入框中输入数组的长度值');
+                return;
+            }
+            var arrLen = parseInt(arrLenStr);
+            if(!arrLen) {
+                alert('数组的长度值应为数字');
+                return;
+            }
+            sort.reset();
+            var nums = randomArray(arrLen, 1, 100);
+            initElements(nums);
+            switch(sortStr) {
+                case 'bubbleSort':
+                    sort = new BubbleSort(container, nums);
+                    break;
+                case 'insertSort':
+                    sort = new InsertSort(container, nums);
+                    break;
+                case 'mergeSort':
+                    sort = new MergeSort(container, nums);
+                    break;
+                case 'selectSort':
+                    sort = new SelectSort(container, nums);
+                    break;
+            }
+            sort.init();
+            operationBtnReset();
+        }
+        // 设置数组元素
+        submitBtn2.onclick = function(e) {
+            e.preventDefault();
+            var elements = document.getElementById('elements');
+            var inputs = elements.getElementsByTagName('input');
+            var nums = new Array();
+            for(var i = 0; i < inputs.length; i++) {
+                console.log(inputs[i].value);
+                var num = parseInt(inputs[i].value);
+                if(!num) {
+                    alert('第' + i + '个元素非法，只能设置数字' + inputs[i].value);
+                    return;
+                }
+                nums.push(num);
+            }
+            e.preventDefault();
+            sort.oldNumbers = nums;
+            sort.reset();
+            initElements(nums);
+        }
+        //导航
+        for(var i = 0; i < aTags.length; i++) {
+            (function(i, _this) {
+                aTags[i].onclick = function() {
+                    sort.reset();
+                    pauseBtn.className = 'a-disabled';
+                    runBtn.className = '';
+                    switch(aTags[i].innerHTML) {
+                        case '选择排序':
+                            _this.sortStr = 'selectSort';
+                            _this.sort = new SelectSort(_this.container, _this.data);
+                            _this.sort.init();
+                            break;
+                        case '冒泡排序':
+                            _this.sortStr = 'bubbleSort';
+                            _this.sort = new BubbleSort(_this.container, _this.data);
+                            _this.sort.init();
+                            break;
+                        case '插入排序':
+                            _this.sortStr = 'insertSort';
+                            _this.sort = new InsertSort(_this.container, _this.data);
+                            _this.sort.init();
+                            break;
+                        case '归并排序':
+                            _this.sortStr = 'mergeSort';
+                            _this.sort = new MergeSort(_this.container, _this.data);
+                            _this.sort.init();
+                            break;
+                    }
+                }
+            })(i, this);
+        }
+    </script>
+</body>
+</html>
