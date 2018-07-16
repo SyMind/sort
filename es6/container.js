@@ -10,7 +10,6 @@ class Container {
         this.yUnit = null;
         
         this.swapTimeout = 1000;
-        this.swapTimer = null;
 
         this.defaultColor = '#2980B9';
 
@@ -24,12 +23,11 @@ class Container {
         this.moveDownTimeout = 1000;
         this.moveUpTimeout = 1000;
         this.tempDataIndex = null;
-        this.flag0 = false;
+        this.isMoveDown = false;
     }
     reset() {
         clearInterval(this.moveDownTimer);
         clearInterval(this.moveUpTimer);
-        clearInterval(this.swapTimer);
     }
     init() {
         // 清空容器
@@ -79,116 +77,44 @@ class Container {
 
         let originLeft1 = this._getOrginLeft(idx1);
         let originLeft2 = this._getOrginLeft(idx2);
-        // 计算动画帧数
-        // let nums = Math.ceil(this.swapTimeout / 30);
-        // 计算动画速度
-        // let speed = (originLeft2 - originLeft1) / nums;
-        // let flag = 0;
-        // function handler(_this) {
-        //     flag++;
-        //     if(flag >= nums) {
-        //         clearInterval(_this.swapTimer);
-        //         el1.style.left = originLeft2 + 'px';
-        //         el2.style.left = originLeft1 + 'px';
-        //         return;
-        //     }
-        //     el1.style.left = el1.offsetLeft + speed + 'px';
-        //     el2.style.left = el2.offsetLeft - speed + 'px';
-        // }
-        // handler(this);
-        // clearInterval(this.swapTimer);
-        // this.swapTimer = this.animate(handler, 30, this);
 
         el1.style.left = originLeft2 + 'px';
         el2.style.left = originLeft1 + 'px';
     }
     moveDown(idx1, idx2) {
-        if(!this.flag0) {
-            this.flag0 = true;
+        if(!this.isMoveDown) {
+            this.isMoveDown = true;
             this.tempDataIndex = this.idxes.slice();
         }
         this.tempDataIndex[idx2] = this.idxes[idx1];
-        var obj1 = this.container.children[this.idxes[idx1]];
-        var endBottom = 0;
-        var endLeft = this._getOrginLeft(idx2);
-        var leftDistance = endLeft - obj1.offsetLeft;
-        var nums = Math.ceil(this.moveDownTimeout / 30);
-        var leftSpeed = Math.ceil(leftDistance / nums);
-        var bottomSpeed = Math.ceil(this.midHeight / nums);
-        var flag = 0;
-        function handler(_this) {
-            flag++;
-            if(flag >= nums) {
-                clearInterval(_this.moveDownTimer);
-                obj1.style.left = endLeft + 'px';
-                obj1.style.bottom = endBottom + 'px';
-                return;
-            }
-            obj1.style.left = obj1.offsetLeft + leftSpeed + 'px';
-            obj1.style.bottom = parseInt(obj1.style.bottom) - bottomSpeed + 'px';
-        }
-        handler(this);
-        clearInterval(this.moveDownTimer);
-        this.moveDownTimer = this.animate(handler, this.moveDownSpeed, this);
+
+        let el = this.container.children[this.idxes[idx1]];
+        let targetBottom = 0;
+        let targetLeft = this._getOrginLeft(idx2);
+
+        el.style.left = targetLeft + 'px'
+        el.style.bottom = targetBottom + 'px'
     }
     moveUp(idx1, idx2) {
-        var obj1 = this.container.children[this.idxes[idx1]];
-        var endBottom = this.midHeight;
-        var endLeft = this.getOrginLeft(idx2);
-        var leftDistance = endLeft - obj1.offsetLeft;
-        var nums = Math.ceil(this.moveUpTimeout / 30);
-        var leftSpeed = leftDistance / nums;
-        var bottomSpeed = this.midHeight / nums;
-        var flag = 0;
-        function handler(_this) {
-            flag++;
-            if(flag >= nums) {
-                clearInterval(_this.moveUpTimer);
-                obj1.style.left = endLeft + 'px';
-                obj1.style.bottom = endBottom + 'px';
-                return;
-            }
-            obj1.style.left = obj1.offsetLeft + leftSpeed + 'px';
-            obj1.style.bottom = parseInt(obj1.style.bottom) + bottomSpeed + 'px';
-        }
-        handler(this);
-        clearInterval(this.moveUpTimer);
-        this.moveUpTimer = this.animate(handler, this.moveDownSpeed, this);
+        let el = this.container.children[this.idxes[idx1]];
+
+        let targetBottom = this.midHeight;
+        let targetLeft = this.getOrginLeft(idx2);
+
+        el.style.left = targetLeft + 'px';
+        el.style.bottom = targetBottom + 'px';
     }
-    moveUp2(start, end) {
-        var endBottom = this.midHeight;
-        var nums = Math.ceil(this.moveUpTimeout / 30);
-        var bottomSpeed = this.midHeight / nums;
-        var flag = 0;
-        function handler(_this) {
-            flag++;
-            if(flag >= nums) {
-                clearInterval(_this.moveUpTimer);
-                for(let i = start; i <= end; i++) {
-                    var obj1 = _this.container.children[_this.idxes[i]];
-                    obj1.style.bottom = endBottom + 'px';
-                }
-                if(_this.flag0) {
-                    _this.flag0 = false;
-                    _this.idxes = _this.tempDataIndex.slice();
-                }
-                return;
-            }
-            for(let i = start; i <= end; i++) {
-                var obj1 = _this.container.children[_this.idxes[i]];
-                obj1.style.bottom = parseInt(obj1.style.bottom) + bottomSpeed + 'px';
-            }
+    moveUpGroup(start, end) {
+        let targetBottom = this.midHeight;
+
+        for (let i = start; i <= end; i++) {
+            let el = this.container.children[this.idxes[i]];
+            el.style.bottom = targetBottom
         }
-        handler(this);
-        clearInterval(this.moveUpTimer);
-        this.moveUpTimer = this.animate(handler, this.moveDownSpeed, this);
-    }
-    animate(callback, timeout, param) {
-        var args = Array.prototype.slice.call(arguments,2); 
-        var _cb = function() { 
-            callback.apply(null,args); 
+        if(this.isMoveDown) {
+            this.isMoveDown = false;
+            this.idxes = this.tempDataIndex.slice();
         }
-        return setInterval(_cb,timeout); 
     }
     timeoutAnimate(callback, timeout, param) {
         var args = Array.prototype.slice.call(arguments, 2); 

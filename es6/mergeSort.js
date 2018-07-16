@@ -140,6 +140,7 @@ class MergeSort {
     }
     run() {
         function handler(_this) {
+            console.log(_this.container.idxes)
             _this.run();
         }
         if(!this.isFinished) {
@@ -161,7 +162,7 @@ class MergeSort {
                 this.timer = this.container.timeoutAnimate(handler, this.container.moveDownTimeout, this);
             } else if(this.isMoveUp) {
                 this.isMoveUp = false;
-                this.container.moveUp2(this.moveUpStart, this.moveUpEnd);
+                this.container.moveUpGroup(this.moveUpStart, this.moveUpEnd);
                 clearInterval(this.timer);
                 this.timer = this.container.timeoutAnimate(handler, this.container.moveUpTimeout, this);
             } else {
