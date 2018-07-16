@@ -6,28 +6,20 @@ class Container {
         this.isMerageSort = isMerageSort; // 归并排序时，容器将会初始化为上下两栏
 
         this.labelHeight = 20;
-        this.xUnit = null;
-        this.yUnit = null;
         
-        this.swapTimeout = 1000;
+        this.swapTime = 1000;
 
         this.defaultColor = '#2980B9';
 
-        if (isMerageSort) {
-            this.midHeight = this.container.offsetHeight / 2;
-        } else {
-            this.midHeight = this.container.offsetHeight;
-        }
-        this.moveDownTimer = null;
-        this.moveUpTimer = null;
-        this.moveDownTimeout = 1000;
-        this.moveUpTimeout = 1000;
+        this.midHeight = isMerageSort ? this.container.offsetHeight / 2 : this.container.offsetHeight
+
+        this.moveDownTime = 1000;
+        this.moveUpTime = 1000;
         this.tempDataIndex = null;
         this.isMoveDown = false;
     }
     reset() {
-        clearInterval(this.moveDownTimer);
-        clearInterval(this.moveUpTimer);
+        
     }
     init() {
         // 清空容器
@@ -115,13 +107,6 @@ class Container {
             this.isMoveDown = false;
             this.idxes = this.tempDataIndex.slice();
         }
-    }
-    timeoutAnimate(callback, timeout, param) {
-        var args = Array.prototype.slice.call(arguments, 2); 
-        var _cb = function() { 
-            callback.apply(null, args); 
-        }
-        return setTimeout(_cb, timeout); 
     }
     _getOrginLeft(index) {
         return this.xUnit * index + index * 0.1;

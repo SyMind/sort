@@ -94,7 +94,7 @@ class BubbleSort {
             clearTimeout(this.timer);
             this.timer = setTimeout(() => {
                 this.run();
-            }, this.container.swapTimeout);
+            }, this.container.swapTime);
         } else if(this.isFinished) {
             this.container.clearColumnColor();
             this.container.labelColor(0, this.orderedColor);

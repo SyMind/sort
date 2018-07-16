@@ -5,7 +5,7 @@ class InsertSort {
         this.oldNumbers = numbers.slice();
 
         this.timer = null;
-        this.defaultTimeout = 1000;
+        this.defaultTime = 1000;
 
         this.i = 0;
         this.j = 0;
@@ -34,8 +34,6 @@ class InsertSort {
     reset() {
         this.container.reset();
         clearTimeout(this.timer);
-
-        this.defaultTimeout = 1000;
 
         this.i = 0;
         this.j = 0;
@@ -74,9 +72,6 @@ class InsertSort {
         }
     }
     run() {
-        function handler(_this) { 
-            _this.run();
-        }
         if(!this.flag1) {
             if(this.flag2) {
                 this.flag2 = false;
@@ -88,22 +83,27 @@ class InsertSort {
         if(this.isSwaped) { //存在交换
             if(!this.flag1) {
                 this.flag1 = true;
-                clearInterval(this.timer);
-                this.timer = this.container.timeoutAnimate(handler, 500, this);
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => {
+                    this.run();
+                }, this.defaultTime);
             } else {
                 this.flag1 = false;
                 this.isSwaped = false;  
                 this.container.swap(this.swapIndex1, this.swapIndex2);
-                clearInterval(this.timer);
-                this.timer = this.container.timeoutAnimate(handler, this.container.swapTimeout, this);
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => {
+                    this.run();
+                }, this.defaultTime);
             }
         } else if(this.isFinished) {
             this.container.clearColumnColor();
             this.container.labelColor(this.numbers.length - 1, this.orderedColor);
-            clearInterval(this.timer);
         } else {
-            clearInterval(this.timer);
-            this.timer = this.container.timeoutAnimate(handler, 500, this);
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => {
+                this.run();
+            }, this.defaultTime);
         }
     }
 }

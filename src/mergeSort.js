@@ -139,10 +139,6 @@ class MergeSort {
         }
     }
     run() {
-        function handler(_this) {
-            console.log(_this.container.idxes)
-            _this.run();
-        }
         if(!this.isFinished) {
             this.next();
             this.container.clearColumnColor();
@@ -153,24 +149,27 @@ class MergeSort {
             if(this.isSwap) {
                 this.isSwap = false;
                 this.container.swap(this.swapIndex1, this.swapIndex2);
-                clearInterval(this.timer);
-                this.timer = this.container.timeoutAnimate(handler, this.container.swapTimeout, this);
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => {
+                    this.run();
+                }, this.container.swapTime);
             } else if(this.isMoveDown) {
                 this.isMoveDown = false;
                 this.container.moveDown(this.moveDownIndex1, this.moveDownIndex2);
-                clearInterval(this.timer);
-                this.timer = this.container.timeoutAnimate(handler, this.container.moveDownTimeout, this);
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => {
+                    this.run();
+                }, this.container.moveDownTime);
             } else if(this.isMoveUp) {
                 this.isMoveUp = false;
                 this.container.moveUpGroup(this.moveUpStart, this.moveUpEnd);
-                clearInterval(this.timer);
-                this.timer = this.container.timeoutAnimate(handler, this.container.moveUpTimeout, this);
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => {
+                    this.run();
+                }, this.container.moveUpTime);
             } else {
-                clearInterval(this.timer);
-                this.timer = this.container.timeoutAnimate(handler, 500, this);
+                this.run()
             }
-        } else {
-            clearTimeout(this.timer);
         }
     }
 }
