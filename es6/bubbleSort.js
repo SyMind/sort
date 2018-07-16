@@ -4,23 +4,14 @@ class BubbleSort {
         this.numbers = numbers;
         this.oldNumbers = numbers.slice();
 
-        this.i = 0;
-        this.j = 0;
-        this.temp = null;
+        this.i = 0; // 外层循环标记量
+        this.j = 0; // 内存循环量
 
-        this.timer = null;
         this.defaultTimeout = 1000;
 
-        this.isFinished = false;
-        this.isSwaped = false;
-        this.swapIndex1 = null;
-        this.swapIndex2 = null;
-        this.flag = false;  //标记是否执行内部循环体
-        this.flag0 = false; //为了使next中内部循环标记j处理滞后
-        this.flag1 = false; //标记是否存在未处理的交换动画
-        this.flag3 = false; //当前处理的元素
-        this.selectedIndex1 = 0;
-        this.selectedIndex2 = 0;
+        this.isFinished = false; // 外层循环是否结束
+        this.isInnerFinished = false;  // 内层循环是否结束
+        this.isSelected = false; // 是存在元素被选中
 
         this.selectedColor = '#27AE60';
         this.orderedColor = '#2ECC71';
@@ -32,55 +23,47 @@ class BubbleSort {
         clearTimeout(this.timer);
     }
     reset() {
+        // 重置容器
         this.container.reset();
+
+        // 清除定时器
         clearTimeout(this.timer);
+
+        // 重置循环变量
         this.i = 0;
         this.j = 0;
 
-        this.defaultTimeout = 1000;
-
+        // 重置标记量
         this.isFinished = false;
-        this.isSwaped = false;
-        this.flag = false;
-        this.flag0 = false;
-        this.flag1 = false;
-        this.flag3 = false;
+        this.isInnerFinished = false;
+        this.isNeedSwap = false;
+        this.isSelected = false;
         this.selectedIndex1 = 0;
         this.selectedIndex2 = 0;
         this.container.numbers = this.oldNumbers;
         this.init();
     }
-    next() {
-        if(this.flag) { //处理内部循环体
-            if(!this.flag0) {
-                this.flag0 = true;
-                this.j = 0;
+    step() {
+        if (this.isInnerFinished) { // 处理内层循环体
+            this.isSelected = true;
+            // 记录选中项
+            this.selectedIdx1 = this.j;
+            this.selectedIdx2 = this.j + 1;
+            if (this.numbers[this.selectedIdx1] > this.numbers[this.selectedIdx2]) {
+                let tempIdx = this.numbers[this.selectedIdx1];
+                this.numbers[this.selectedIdx1] = this.numbers[this.selectedIdx2];
+                this.numbers[this.selectedIdx2] = tempIdx;
+                this.isNeedSwap = true;  // 更新与交换操作相关的标记
             }
-            this.flag3 = true;
-            this.selectedIndex1 = this.j;
-            this.selectedIndex2 = this.j + 1;
-            if (this.numbers[this.j] > this.numbers[this.j + 1]) {
-                this.temp = this.numbers[this.j];
-                this.numbers[this.j] = this.numbers[this.j + 1];
-                this.numbers[this.j + 1] = this.temp;
-                this.isSwaped = true;  //更新与交换操作相关的标记
-                this.swapIndex1 = this.j;
-                this.swapIndex2 = this.j + 1;
-            }
-            this.j++;
-            if(this.j >= this.numbers.length - 1 - this.i) {   // 内层循环结束
-                this.flag2 = true;
-                if(this.isSwaped) {
-                    this.orderedIndex = this.j - 1;
-                } else {
-                    this.orderedIndex = this.j;
-                }
-                this.flag = false;
+            ++this.j;
+            if(this.j >= this.numbers.length - this.i - 1) {   // 内层循环结束
+                this.orderedIndex = this.isNeedSwap ? this.j - 1 : this.j
+                this.isInnerFinished = false;
                 this.i++;
-                this.flag0 = false;
             }
-        } else if(this.i < this.numbers.length - 1) { //外部循环体结束判别
-            this.flag = true;
+        } else if(this.i < this.numbers.length - 1) { // 外部循环体没有结束时，准备下一次内部循环
+            this.isInnerFinished = true;
+            this.j = 0;
         } else {
             this.isFinished = true;
         }
@@ -89,41 +72,34 @@ class BubbleSort {
         function handler(_this) { 
             _this.run();
         }
-        //不存在未处理的排序动画时再执行下一步
-        if(!this.flag1) {
-            this.next();
+        // 不存在交换动画时，直接进行下一步
+        if(!this.swapFlag) {
+            this.step();
         }
-        //存在已经排序完毕的元素
-        if(this.flag2) {
-            this.flag2 = false;
+        // 内层循环结束时，标记已经排序完毕的元素
+        if(!this.isInnerFinished) {
             this.container.labelColor(this.orderedIndex, this.orderedColor);
         }
-        //将处理的元素着色
-        if(this.flag3) { 
-            this.flag3 = false;
+        // 将选中的元素着色
+        if(this.isSelected) { 
+            this.isSelected = false;
             this.container.clearColumnColor();
-            this.container.columnColor(this.selectedIndex1, this.selectedColor);
-            this.container.columnColor(this.selectedIndex2, this.selectedColor);
+            this.container.columnColor(this.selectedIdx1, this.selectedColor);
+            this.container.columnColor(this.selectedIdx2, this.selectedColor);
         }
         //存在交换时，在下一次运行时执行交换动画
-        if(this.isSwaped) { 
-            if(!this.flag1) {
-                this.flag1 = true;
-                clearInterval(this.timer);
-                this.timer = this.container.timeoutAnimate(handler, this.defaultTimeout, this);
-            } else {
-                this.flag1 = false;
-                this.isSwaped = false;  
-                this.container.swap(this.swapIndex1, this.swapIndex2);
-                clearInterval(this.timer);
-                this.timer = this.container.timeoutAnimate(handler, this.container.swapTimeout, this);
-            }
+        if(this.isNeedSwap) {
+            this.isNeedSwap = false;  
+            this.container.swap(this.selectedIdx1, this.selectedIdx2);
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => {
+                this.run();
+            }, this.container.swapTimeout);
         } else if(this.isFinished) {
             this.container.clearColumnColor();
             this.container.labelColor(0, this.orderedColor);
         } else {
-            clearInterval(this.timer);
-            this.timer = this.container.timeoutAnimate(handler, this.defaultTimeout, this);
+            this.run();
         }
     }
 }
